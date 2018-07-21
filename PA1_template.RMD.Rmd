@@ -1,0 +1,125 @@
+
+
+
+WEEK 2 PROJECT - REPRODUCIBLE RESEARCH
+========================================
+
+This file contains codes, texts and figures for the 2nd week project for reproducible research course.
+
+## Reading Data from csv file 
+```{r, echo=TRUE}
+a<-read.csv("~/GitHub/RepData_PeerAssessment1/activity/activity.csv")
+
+```
+###load necessary libraries
+```{r libraries, echo=TRUE, message=FALSE}
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+```
+
+## The total number of daily steps
+
+```{r, echo=TRUE}
+sum(a$steps, na.rm = TRUE)
+```
+
+## Histogram of the total number of steps per day
+```{r,echo=FALSE, results='hide', warning=FALSE, fig.show='hide'}
+##not used codes
+m<-group_by(a,date)
+n<-summarize(m, st=sum(steps), na.rm=TRUE)
+n<-mutate(n, day=day(date))
+n<-mutate(n, month=month(date))
+n<-mutate(n, ndat=paste(day, month, sep = "-"))
+ndat1<-factor(n$ndat, ordered = TRUE, levels = n$ndat)
+ggplot(n, aes(x = ndat1, y = st))+ geom_bar(stat = 'identity')+labs(x="DATE", y="STEPS")+theme(axis.text.x = element_text(color="black", size=7, angle=70))
+```
+
+```{R, echo=TRUE, warning=FALSE }
+m<-group_by(a,date)
+n<-summarize(m, st=sum(steps), na.rm=TRUE)
+hist(n$st, main = "TOTAL NUMBER OF STEPS EACH DAY", xlab = "number of steps")
+```
+
+## The mean and median of number of steps per day
+```{r,echo=TRUE}
+mean<-mean(n$st, na.rm=TRUE)
+mean
+
+median<-median(n$st, na.rm=TRUE)
+median 
+```
+
+### The MEAN of the number of steps per day is `r mean`.
+### The MEDIAN of the number of steps per day is `r median`.
+
+
+
+
+## Average Daily Activity Pattern
+
+```{r, echo=TRUE}
+m1<-group_by(a,interval)
+n1<-summarize(m1, avst=mean(steps, na.rm=TRUE))
+plot(n1$interval, n1$avst, type = "l", xlab= "interval", ylab= "Avergae Number of Steps")
+
+max<-max(n1$avst, na.rm = TRUE)
+max
+t<-a$interval[which.max(n1$avst)]
+t
+```
+###The 5-minute time interval number `r t` has the maximum number of steps which is `r max` steps.
+
+## Number of Missing Values
+```{r, echo=TRUE}
+length(which(is.na(a)))
+```
+
+### The mean value of the number of steps per interval will be used to fill the missing values(NA), and a new dataset (a1) is created.
+```{r, echo=TRUE}
+a1<-a
+a1$steps[is.na(a1$steps)]<-n1$avst
+```
+###  Histogram of the total number of steps per day after imputing missing values
+```{r,echo=FALSE, results='hide', warning=FALSE, fig.show='hide'}
+##not used codes
+m2<-group_by(a1,date)
+n2<-summarize(m2, st2=sum(steps), na.rm=TRUE)
+n2<-mutate(n2, day2=day(date))
+n2<-mutate(n2, month2=month(date))
+n2<-mutate(n2, ndat2=paste(day2, month2, sep = "-"))
+ndat3<-factor(n2$ndat2, ordered = TRUE, levels = n2$ndat2)
+ggplot(n2, aes(x = ndat3, y = st2))+ geom_bar(stat = 'identity')+labs(x="DATE", y="STEPS")+theme(axis.text.x = element_text(color="black", size=7, angle=70))
+```
+
+```{r, }
+
+m2<-group_by(a1,date)
+n2<-summarize(m2, st2=sum(steps), na.rm=TRUE)
+hist(n2$st2, main = "TOTAL NUMBER OF STEPS EACH DAY", xlab = "number of steps")
+```
+
+## The mean and median of number of steps per day
+```{r,echo=TRUE}
+mean<-mean(n2$st2, na.rm=TRUE)
+mean
+
+median<-median(n2$st2, na.rm=TRUE)
+median 
+```
+
+### The pattern of the histogram of total daily steps changed after imputing missing values, resulted in less varaiationa with respect to days. However, mean and median values almost has not changed
+
+## Create a new factor variable in the dataset with two level (i.e. weekend and weekday)
+###generate a panel of two plots to show the daily steps during weekdays and weekdends. 
+
+```{r, echo= TRUE}
+da<-as.Date(a1$date)
+a1<-cbind(a1, da)
+a1<-mutate(a1, w=weekdays(da))
+a1$wday<-"weekday"
+a1[a1$w %in% c('Saturday', 'Sunday'),]$wday<-"Weekend"
+a1<-mutate(a1, wday1=as.factor(wday))
+ggplot(a1, aes(x = interval, y = steps, color=wday1))+ geom_line()+facet_grid(wday1~.)+labs(col="")
+```
