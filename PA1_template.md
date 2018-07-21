@@ -40,7 +40,7 @@ n<-summarize(m, st=sum(steps), na.rm=TRUE)
 hist(n$st, main = "TOTAL NUMBER OF STEPS EACH DAY", xlab = "number of steps")
 ```
 
-![plot of chunk unnamed-chunk-48](figure/unnamed-chunk-48-1.png)
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
 
 ## The mean and median of number of steps per day
 
@@ -77,7 +77,7 @@ n1<-summarize(m1, avst=mean(steps, na.rm=TRUE))
 plot(n1$interval, n1$avst, type = "l", xlab= "interval", ylab= "Avergae Number of Steps")
 ```
 
-![plot of chunk unnamed-chunk-50](figure/unnamed-chunk-50-1.png)
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
 
 ```r
 max<-max(n1$avst, na.rm = TRUE)
@@ -124,7 +124,7 @@ n2<-summarize(m2, st2=sum(steps), na.rm=TRUE)
 hist(n2$st2, main = "TOTAL NUMBER OF STEPS EACH DAY", xlab = "number of steps")
 ```
 
-![plot of chunk unnamed-chunk-54](figure/unnamed-chunk-54-1.png)
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png)
 
 ## The mean and median of number of steps per day
 
@@ -162,4 +162,4 @@ a1<-mutate(a1, wday1=as.factor(wday))
 ggplot(a1, aes(x = interval, y = steps, color=wday1))+ geom_line()+facet_grid(wday1~.)+labs(col="")
 ```
 
-![plot of chunk unnamed-chunk-56](figure/unnamed-chunk-56-1.png)
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
